@@ -19,12 +19,14 @@ struct Vector3
     double x, y, z;
 
     Vector3(double x, double y, double z): x(x), y(y), z(z) {}
+    Vector3(const Vector3& v): x(v.x), y(v.y), z(v.z) {}
 
     Vector3& operator=(const Vector3& v) { x = v.x; y = v.y; z = v.z; return *this; }
 
     Vector3 operator-() const { return Vector3(-x, -y, -z); }
     
     Vector3 operator+(const Vector3& v) const { return Vector3(x + v.x, y + v.y, z + v.z); }
+    Vector3& operator+=(const Vector3& v) { return *this = *this + v; }
     Vector3 operator-(const Vector3& v) const { return *this + -v; }
 
     Vector3 operator*(const double s) const { return Vector3(x * s, y * s, z * s); }
@@ -46,6 +48,8 @@ struct Vector3
     double magnitude() const { return std::sqrt(x * x + y * y + z * z); }
     Vector3 normal() const { return *this / this->magnitude(); }
     Vector3& normalize() { return *this = *this / this->magnitude(); }
+
+    double operator[](size_t i) const { return i == 0 ? x : i == 1 ? y : i == 2 ? z : std::numeric_limits<double>::quiet_NaN(); }
 
     static Vector3 none() { return Vector3(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()); }
 

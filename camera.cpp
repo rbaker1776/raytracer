@@ -33,37 +33,40 @@ Color Camera::ray_color(const Ray& ray, int depth, const Scene& scene) const
 
     HitRecord record;
 
-    if (scene.is_seen(ray, record, Interval(1e-6, 1e6)))
+    if (!scene.is_seen(ray, record, Interval(1e-6, 1e6)))
     {
-        Ray scattered(Vector3(0, 0, 0), Vector3(0, 0, 0));
-        Color attenuation(0, 0, 0);
-        if (record.material->scatter(ray, record, attenuation, scattered))
-        {
-            return attenuation * this->ray_color(scattered, depth - 1, scene);
-        }
+        return this->background(ray);
     }
 
-    double a { 0.5 * (ray.direction.normal().y + 1.0) };
-    return Color(1.0, 1.0, 1.0) * (1.0 - a) + Color(0.5, 0.7, 1.0) * a;
+    Ray scattered(Vector3::none(), Vector3::none());
+    Color attenuation(0, 0, 0);
+    Color emitted_color { record.material->emitted(record.intersection) };
+
+    if (!record.material->scatter(ray, record, attenuation, scattered))
+    {
+        return emitted_color;
+    }
+
+    Color scattered_color { attenuation * ray_color(scattered, depth - 1, scene) };
+    return scattered_color + emitted_color;
 }
 
 
 Image Camera::render(const Scene& scene) const
 {
     Image image(x_res, y_res);
-    const double n_rays { 10 };
-
     HitRecord record {};
 
     for (size_t i = 0; i < y_res; ++i)
     for (size_t j = 0; j < x_res; ++j)
     {
-        for (int k = 0; k < n_rays; ++k)
-        {
+        Color pixel_color(0, 0, 0);
+        for (int k = 0; k < n_rays_per_pixel; ++k)
+        { 
             const Ray ray { this->make_ray(j, i) };
-            Color pixel_color { ray_color(ray, 10, scene) };
-            image[i][j] = image[i][j] + pixel_color / n_rays;
+            pixel_color += ray_color(ray, 10, scene) / n_rays_per_pixel;
         }
+        image[i][j] = pixel_color;
     }
 
     return image;

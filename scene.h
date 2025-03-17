@@ -23,15 +23,14 @@ public:
     {
         HitRecord tmp_record {};
         bool seen { false };
-        double nearest { std::numeric_limits<double>::max() };
 
         for (const std::shared_ptr<Visible>& obj: objects)
         {
-            if (obj->is_seen(ray, tmp_record, Interval(0, nearest)))
+            if (obj->is_seen(ray, tmp_record, t_interval))
             {
                 seen = true;
                 record = tmp_record;
-                nearest = record.t;
+                t_interval.set_max(record.t);
             }
         }
 

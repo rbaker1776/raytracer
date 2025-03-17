@@ -24,11 +24,19 @@ private:
     Vector3 pixel_dj = Vector3(0, 0, 0);  // step 1 pixel in the direction of basis.j
     Vector3 pixel_dk = Vector3(0, 0, 0);  // step 1 pixel in the direction of basis.k
     Point3  pixel_00 = Point3 (0, 0, 0);  // coords of the first pixel { x, y, z }
+                                          //
+    int n_rays_per_pixel = 256;           // # of rays we shoot at each pixel
 
     Ray make_ray(size_t j, size_t k) const;
     Color ray_color(const Ray& ray, int depth, const Scene& scene) const;
 
     void update_viewport();
+
+    Color background(const Ray& ray) const
+    {
+        const double inclination { 0.5 * (ray.direction.normal().y + 1.0) };
+        return Color(1.0, 1.0, 1.0) * (1.0 - inclination) + Color(0.5, 0.7, 1.0) * inclination;
+    }
 
 public:
     Camera() = default;

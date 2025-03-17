@@ -6,6 +6,7 @@
 #include "../visible.h"
 #include "../vector3.h"
 #include "../material.h"
+#include "../bbox.h"
 
 
 class Sphere: public Visible
@@ -14,10 +15,15 @@ private:
     Vector3 center;
     double radius;
     std::shared_ptr<Material> material;
+    BBox bbox;
 
 public:
     Sphere(const Vector3& center, double radius, std::shared_ptr<Material> mat):
-        center(center), radius(radius), material(mat)
+        center(center), radius(radius), material(mat), bbox(
+            Interval(center.x - radius, center.x + radius),
+            Interval(center.y - radius, center.y + radius),
+            Interval(center.z - radius, center.z + radius)
+        )
     {}
 
     bool is_seen(const Ray& ray, HitRecord& record, Interval t_interval) const override
@@ -40,7 +46,6 @@ public:
         //
         // the roots of this quadratic, should they exist, are the points of
         // intersection between the ray and the sphere
-
 
         const Vector3 R { ray.origin - this->center };
 
@@ -65,15 +70,7 @@ public:
         return false;
     }
 
-    BBox bounding_box() const override
-    {
-        return BBox
-        (
-            Interval(center.x - radius, center.x + radius),
-            Interval(center.y - radius, center.y + radius),
-            Interval(center.z - radius, center.z + radius)
-        );
-    }
+    BBox bounding_box() const override { return this->bbox; }
 };
 
 

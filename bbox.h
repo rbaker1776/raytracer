@@ -7,17 +7,16 @@
 #include "vector3.h"
 
 
-class Interval
+struct Interval
 {
-private:
     double lo;
     double hi;
 
-public:
     Interval(double lo, double hi): lo(lo), hi(hi) {}
 
     bool does_include(double d) const { return d >= lo && d <= hi; }
 
+    void set_max(double d) { hi = d; }
     void grow_to_include(const Interval& i) { lo = std::fmin(lo, i.lo); hi = std::fmax(hi, i.hi); }
 
     static double clamp(double d, double lo, double hi) { return std::fmin(std::fmax(d, lo), hi); }
@@ -49,6 +48,35 @@ public:
         y.grow_to_include(box.y);
         z.grow_to_include(box.z);
     }
+
+    bool is_seen(const Ray& ray, Interval t_interval) const
+    {
+        for (int i = 0; i < 3; ++i)
+        {
+            const double tlo { ((*this)[i].lo - ray.origin[i]) / ray.direction[i] };
+            const double thi { ((*this)[i].hi - ray.origin[i]) / ray.direction[i] };
+
+            if (tlo < thi)
+            {
+                if (tlo > t_interval.lo) { t_interval.lo = tlo; }
+                if (thi < t_interval.hi) { t_interval.hi = thi; }
+            }
+            else
+            {
+                if (thi > t_interval.lo) { t_interval.lo = thi; }
+                if (tlo > t_interval.hi) { t_interval.hi = tlo; }
+            }
+
+            if (t_interval.hi < t_interval.lo)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    Interval operator[](size_t i) const { return i == 0 ? x : i == 1 ? y : i == 2 ? z : Interval::empty(); }
 
     static BBox empty() { return BBox(Interval::empty(), Interval::empty(), Interval::empty()); }
     static BBox world() { return BBox(Interval::world(), Interval::world(), Interval::world()); }

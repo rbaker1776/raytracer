@@ -2,18 +2,21 @@
 #define LAMBERTIAN_H_9010D12703E732E2
 
 #include "../material.h"
+#include "../texture.h"
+#include "../textures/solid.h"
 #include "../vector3.h"
 
 
 class Lambertian: public Material
 {
-private:
-    Color albedo;
+protected:
+    std::shared_ptr<Texture> texture;
 
 public:
-    Lambertian(const Color& c): albedo(c) {}
+    Lambertian(std::shared_ptr<Texture> tex): texture(tex) {}
+    Lambertian(const Color& albedo): texture(std::make_shared<Solid>(albedo)) {}
 
-    bool scatter(const Ray& ray, const HitRecord& record, Color& attenuation, Ray& scattered) const override
+    virtual bool scatter(const Ray& ray, const HitRecord& record, Color& attenuation, Ray& scattered) const override
     {
         Vector3 direction(0, 0, 0);
 
@@ -23,7 +26,7 @@ public:
         }
 
         scattered = Ray(record.intersection, direction);
-        attenuation = albedo;
+        attenuation = texture->color(record.intersection);
         return true;
     }
 };
