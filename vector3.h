@@ -2,6 +2,7 @@
 #define VECTOR3_H_8C0E1EA1CE507ED2
 
 #include <cmath>
+#include <vector>
 #include "fputils.h"
 
 
@@ -44,13 +45,13 @@ struct Vector3
 
     static Vector3 none() { return Vector3(FPUtils::NaN(), FPUtils::NaN(), FPUtils::NaN()); }
 
-    static Vector3 random_direction() { return Vector3(FPUtils::random_normal(), FPUtils::random_normal(), FPUtils::random_normal()).normalized(); }
+    static inline Vector3 random_direction();
 };
 
 
 inline Vector3 Vector3::reflect(const Vector3& normal) const
 {
-    return *this + normal * normal.dot(*this) * 2.0;
+    return *this - normal * this->dot(normal) * 2.0;
 }
 
 inline Vector3 Vector3::refract(const Vector3& normal, double r) const
@@ -59,6 +60,12 @@ inline Vector3 Vector3::refract(const Vector3& normal, double r) const
     const Vector3 perpendicular { (*this + normal * cos_theta) * r };
     const Vector3 parallel { normal * -std::sqrt(std::abs(1.0 - perpendicular.magnitude_squared())) };
     return perpendicular + parallel;
+}
+
+
+inline Vector3 Vector3::random_direction()
+{
+    return Vector3(FPUtils::random_normal(), FPUtils::random_normal(), FPUtils::random_normal()).normalized();
 }
 
 

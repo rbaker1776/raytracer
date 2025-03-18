@@ -19,9 +19,9 @@ namespace FPUtils
         return dis(FPUtils::gen);
     }
 
-    inline double random_normal(double mu = 0.0, double stddev = 1.0)
+    inline double random_normal()
     {
-        std::normal_distribution<double> dis(mu, stddev);
+        static std::normal_distribution<double> dis(0.0, 1.0);
         return dis(FPUtils::gen);
     }
 }

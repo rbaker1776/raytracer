@@ -27,6 +27,7 @@ public:
     Color& operator*=(const Color& c) { return *this = *this * c; } 
 
     Color gamma_correct() const { return Color(std::pow(x, 1.0 / Color::gamma), std::pow(y, 1.0 / gamma), std::pow(z, 1.0 / gamma)); }
+    Color gamma_uncorrect() const { return Color(std::pow(x, Color::gamma), std::pow(y, Color::gamma), std::pow(z, Color::gamma)); }
 
     inline static Color HSL(double h, double s, double l);
 };
