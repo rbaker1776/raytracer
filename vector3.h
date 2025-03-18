@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <vector>
+#include <array>
 #include "fputils.h"
 
 
@@ -12,7 +13,7 @@ struct Vector3
     double y;
     double z;
 
-    Vector3() = delete;
+    Vector3(): x(FPUtils::NaN()), y(FPUtils::NaN()), z(FPUtils::NaN()) {};
     Vector3(double x, double y, double z): x(x), y(y), z(z) {}
     Vector3(const Vector3& v): x(v.x), y(v.y), z(v.z) {}
 
@@ -65,7 +66,18 @@ inline Vector3 Vector3::refract(const Vector3& normal, double r) const
 
 inline Vector3 Vector3::random_direction()
 {
-    return Vector3(FPUtils::random_normal(), FPUtils::random_normal(), FPUtils::random_normal()).normalized();
+    static constexpr size_t N_RANDOMS { 65536 };
+    static const std::array<Vector3, N_RANDOMS> RANDOMS { []()
+    {
+        std::array<Vector3, N_RANDOMS> ret {};
+        for (int i = 0; i < N_RANDOMS; ++i)
+        {
+            ret[i] = Vector3(FPUtils::random_normal(), FPUtils::random_normal(), FPUtils::random_normal()).normalized();
+        }
+        return ret;
+    }() };
+
+    return RANDOMS[std::rand() & (N_RANDOMS - 1)];
 }
 
 

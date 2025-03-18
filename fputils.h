@@ -7,9 +7,9 @@
 
 namespace FPUtils
 {
-    inline double NaN() { return std::numeric_limits<double>::quiet_NaN(); }
+    constexpr double NaN() { return std::numeric_limits<double>::quiet_NaN(); }
 
-    inline double infinity() { return std::numeric_limits<double>::infinity(); }
+    constexpr double infinity() { return std::numeric_limits<double>::infinity(); }
 
     static std::mt19937 gen(std::random_device{}());
 
