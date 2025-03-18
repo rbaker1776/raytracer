@@ -1,7 +1,8 @@
-#ifndef TEXTURE_H_6E0B8552D14C85D2
-#define TEXTURE_H_6E0B8552D14C85D2
+#ifndef TEXTURE_H_B98F82082DE9C978
+#define TEXTURE_H_B98F82082DE9C978
 
 #include "vector3.h"
+#include "color.h"
 
 
 class Texture
@@ -13,4 +14,7 @@ public:
 };
 
 
-#endif // TEXTURE_H_6E0B8552D14C85D2
+#include "textures/solid.h"
+
+
+#endif // TEXTURE_H_B98F82082DE9C978

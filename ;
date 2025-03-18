@@ -1,0 +1,23 @@
+#include "camera.h"
+
+
+void Camera::update_viewport()
+{
+    this->basis.i = this->direction.normalized();
+    this->basis.j = basis.i.cross(Vector3(0, 1, 0)).normalized();
+    this->basis.k = basis.i.cross(basis.j).normalized();
+
+    const double viewport_height { 2.0 * std::tan(fov * std::numbers::pi / 360.0) };
+    const double viewport_width { viewport_height * static_cast<double>(x_res) / static_cast<double>(y_res) };
+
+    this->pixel_dj = basis.j * viewport_width  / static_cast<double>(x_res);
+    this->pixel_dk = basis.k * viewport_height / static_cast<double>(y_res);
+    this->pixel_00 = position + basis.i * focal_length - basis.j * viewport_width / 2.0 - basis.k * viewport_height / 2.0;
+}
+
+
+Ray Camera::make_ray(size_t j_pix, size_t k_pix) const
+{
+    const Vector3 direction { (pixel_00 + pixel_dj * j_pix + pixel_dk * k_pix - position).normalized() };
+    return Ray(position, direction);
+}

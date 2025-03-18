@@ -5,13 +5,20 @@
 #include <cstdint>
 #include <string>
 #include <fstream>
-#include "color.h"
+#include "vector3.h"
+#include "bbox.h"
 
 
 class Image
 {
 private:
     std::vector<std::vector<Color>> data;
+
+    int scale(double d) const
+    {
+        d = std::sqrt(Interval::clamp(d, 0, 0.999));
+        return static_cast<int>(d * 255);
+    }
 
 public:
     Image(size_t width = 0, size_t height = 0):
@@ -37,8 +44,7 @@ public:
         {
             for (Color p: row)
             {
-                const Vector3 rgb { p.gamma_correct() * 255 };
-                f << static_cast<int>(rgb.x) << ' ' << static_cast<int>(rgb.y) << ' ' << static_cast<int>(rgb.z) << ' ';
+                f << scale(p.x) << ' ' << scale(p.y) << ' ' << scale(p.z) << ' ';
             }
             f << '\n';
         }

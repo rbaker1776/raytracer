@@ -1,7 +1,9 @@
-#ifndef MATERIAL_H_E92BCE0A290D3376
-#define MATERIAL_H_E92BCE0A290D3376
+#ifndef MATERIAL_H_B3E722D970B5DA7D
+#define MATERIAL_H_B3E722D970B5DA7D
 
-#include "visible.h"
+#include "vector3.h"
+#include "color.h"
+#include "texture.h"
 
 
 class Material
@@ -9,10 +11,13 @@ class Material
 public:
     virtual ~Material() = default;
 
-    virtual bool scatter(const Ray& ray, const HitRecord& record, Color& attenuation, Ray& scattered) const { return false; }
+    virtual bool scatter(const Ray& ray, const HitRecord& record, Color& attenuation, Ray& scattered) const = 0;
 
-    virtual Color emitted(const Point3& p) const { return Color(0, 0, 0); }
+    virtual Color emit(const Point3& p) const = 0;
 };
 
 
-#endif // MATERIAL_H_E92BCE0A290D3376
+#include "materials/lambertian.h"
+
+
+#endif // MATERIAL_H_B3E722D970B5DA7D

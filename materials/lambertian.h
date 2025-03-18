@@ -1,35 +1,32 @@
-#ifndef LAMBERTIAN_H_9010D12703E732E2
-#define LAMBERTIAN_H_9010D12703E732E2
-
-#include "../material.h"
-#include "../texture.h"
-#include "../textures/solid.h"
-#include "../vector3.h"
+#ifndef LAMBERTIAN_H_AABE71950DF0678D
+#define LAMBERTIAN_H_AABE71950DF0678D
 
 
 class Lambertian: public Material
 {
-protected:
+private:
     std::shared_ptr<Texture> texture;
 
 public:
     Lambertian(std::shared_ptr<Texture> tex): texture(tex) {}
-    Lambertian(const Color& albedo): texture(std::make_shared<Solid>(albedo)) {}
+    Lambertian(const Color& c): texture(std::make_shared<Solid>(c)) {}
 
     virtual bool scatter(const Ray& ray, const HitRecord& record, Color& attenuation, Ray& scattered) const override
     {
         Vector3 direction(0, 0, 0);
-
         while (direction.magnitude() < 1e-12)
         {
-            direction = record.normal + Vector3::random_unit_vector();
+            direction = record.normal + Vector3::random_direction();
         }
 
-        scattered = Ray(record.intersection, direction);
-        attenuation = texture->color(record.intersection);
+        scattered = Ray(record.point, direction);
+        attenuation = texture->color(record.point);
+
         return true;
     }
+
+    virtual Color emit(const Point3& p) const override { return Color(0.0, 0.0, 0.0); }
 };
 
 
-#endif // LAMBERTIAN_H_9010D12703E732E2
+#endif // LAMBERTIAN_H_AABE71950DF0678D

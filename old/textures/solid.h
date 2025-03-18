@@ -1,5 +1,8 @@
-#ifndef SOLID_H_E74EB97B612000F3
-#define SOLID_H_E74EB97B612000F3
+#ifndef SOLID_H_BFB89FF4CD8E08BE
+#define SOLID_H_BFB89FF4CD8E08BE
+
+#include "../texture.h"
+#include "../vector3.h"
 
 
 class Solid: public Texture
@@ -14,4 +17,4 @@ public:
 };
 
 
-#endif // SOLID_H_E74EB97B612000F3
+#endif // SOLID_H_BFB89FF4CD8E08BE

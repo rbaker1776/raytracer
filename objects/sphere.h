@@ -1,77 +1,51 @@
-#ifndef SPHERE_H_7C27FD98572DAB0D
-#define SPHERE_H_7C27FD98572DAB0D
+#ifndef SPHERE_H_3CDE530041D66B87
+#define SPHERE_H_3CDE530041D66B87
 
 #include <cmath>
-#include <memory>
-#include "../visible.h"
-#include "../vector3.h"
-#include "../material.h"
-#include "../bbox.h"
 
 
-class Sphere: public Visible
+class Sphere: public Object
 {
 private:
-    Vector3 center;
+    Point3 center;
     double radius;
     std::shared_ptr<Material> material;
-    BBox bbox;
 
 public:
-    Sphere(const Vector3& center, double radius, std::shared_ptr<Material> mat):
-        center(center), radius(radius), material(mat), bbox(
-            Interval(center.x - radius, center.x + radius),
-            Interval(center.y - radius, center.y + radius),
-            Interval(center.z - radius, center.z + radius)
-        )
+    Sphere(const Point3& p, double r, std::shared_ptr<Material> mat):
+        center(p), radius(r), material(mat)
     {}
 
-    bool is_seen(const Ray& ray, HitRecord& record, Interval t_interval) const override
+    bool is_seen(const Ray& ray, HitRecord& record, Interval& t_bounds) const override
     {
-        // a sphere with center P = { x, y, z } = { A, B, C } and radius R
-        // can be defined by the equation:
-        //
-        //  P² == (x - A)² + (y - B)² + (z - C)² == R²
-        //
-        // recall that a ray is defined by O + Dt. if we sub O + Dt for P
-        // in the equation of a sphere we get:
-        //
-        //  (O + Dt)² == R² ==> (O + Dt)² - R² == 0 ==> D²t² + 2ODt + O² - R² == 0
-        //
-        // this is a standard quadratic equation of form at² + bt + c == 0 where:
-        //
-        //  a = D²
-        //  b = 2 * O * D
-        //  c = O² - R²
-        //
-        // the roots of this quadratic, should they exist, are the points of
-        // intersection between the ray and the sphere
+        const Vector3 R { ray.origin - center };
+        
+        // a == 1 because ray.direction.magnitude() == 1
+        const double b { 2.0 * R.dot(ray.direction) };
+        const double c { R.magnitude_squared() - radius * radius };
 
-        const Vector3 R { ray.origin - this->center };
+        const double det { b * b - 4.0 * c };
 
-        const double a { ray.direction.dot(ray.direction) };
-        const double b { R.dot(ray.direction) * 2.0 };
-        const double c { R.dot(R) - this->radius * this->radius };
-
-        const double det { b * b - 4 * a * c };
-        if (det < 0) { return false; }
-
-        const double t { (-b - std::sqrt(det)) / (2.0 * a) };
-
-        if (t_interval.does_include(t))
+        if (det < 0)
         {
-            record.intersection = ray[t];
-            record.normal = (record.intersection - center).normal();
-            record.t = t;
-            record.material = material;
-            return true;
+            return false;
         }
 
-        return false;
-    }
+        const double t { (-b - std::sqrt(det)) / 2.0 };
+        
+        if (!t_bounds.does_include(t))
+        {
+            return false;
+        }
 
-    BBox bounding_box() const override { return this->bbox; }
+        record.point = ray[t];
+        record.normal = (record.point - center).normalized();
+        record.t = t;
+        record.material = material;
+        
+        return true;
+    }
 };
 
 
-#endif // SPHERE_H_7C27FD98572DAB0D
+#endif // SPHERE_H_3CDE530041D66B87
