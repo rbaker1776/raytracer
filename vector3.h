@@ -63,6 +63,38 @@ struct Vector3
             }
         }
     }
+
+    static Vector3 HSLtoRGB(const Vector3& vec)
+    {
+        double r, g, b;
+        double h { vec.x }, s { vec.y }, l { vec.z };
+
+        if (s == 0)
+        {
+            r = g = b = l;
+        }
+        else
+        {
+            auto hue_to_rgb = [](double p, double q, double t)
+            {
+                if (t < 0) { ++t; }
+                if (t > 1) { --t; }
+                if (t < 1.0 / 6) { return p + (q - p) * 6 * t; }
+                if (t < 1.0 / 2) { return q; }
+                if (t < 2.0 / 3) { return p + (q - p) * (2.0 / 3 - t) * 6; }
+                return p;
+            };
+
+            double q { (l < 0.5) ? (l * (1 + s)) : (l + s - l * s) };
+            double p { 2 * l - q };
+
+            r = hue_to_rgb(p, q, h + 1.0 / 3);
+            g = hue_to_rgb(p, q, h);
+            b = hue_to_rgb(p, q, h - 1.0 / 3);
+        }
+
+        return Vector3(r, g, b);
+    }
 };
 
 

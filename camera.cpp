@@ -11,8 +11,8 @@ void Camera::update_viewport()
     this->basis.j = basis.i.cross(Vector3(0, 1, 0)).normal();
     this->basis.k = basis.i.cross(basis.j).normal();
 
-    const double viewport_width  { 2.0 * std::tan(fov * std::numbers::pi / 360.0) * focal_length };
-    const double viewport_height { viewport_width * static_cast<double>(y_res) / static_cast<double>(x_res) };
+    const double viewport_height { 2.0 * std::tan(fov * std::numbers::pi / 360.0) * focal_length };
+    const double viewport_width { viewport_height * static_cast<double>(x_res) / static_cast<double>(y_res) };
 
     this->pixel_dj = basis.j * viewport_width  / static_cast<double>(x_res);
     this->pixel_dk = basis.k * viewport_height / static_cast<double>(y_res);

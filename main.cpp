@@ -19,7 +19,7 @@ int main()
     Camera camera;
     camera.move_to(Point3(0, 2, 0));
     camera.orient(Vector3(1, 0, 0));
-    camera.set_resolution(1920, 1280);
+    camera.set_resolution(900, 750);
 
     Scene scene;
     scene.add(std::make_shared<Plane>(Vector3(0, 0, 0), Vector3(0, 1, 0), std::make_shared<Lambertian>(std::make_shared<Checkered>(Color(0.1, 0.1, 0.2), Color(0.05, 0.05, 0.1)))));

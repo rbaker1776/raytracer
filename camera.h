@@ -15,7 +15,7 @@ private:
                                           //
     size_t x_res = 1920;                  // width of image in pixels 
     size_t y_res = 1080;                  // height of image in pixels
-    double fov = 90.0;                    // horizontal FOV in degrees
+    double fov = 75.0;                    // vertical FOV in degrees
                                           //
     double focal_length = 5;              // distance to the plane of focus
     double blur_angle = 5e-2;             // variation of ray angles through a pixel
@@ -39,7 +39,7 @@ private:
     }
 
 public:
-    Camera() = default;
+    Camera() { update_viewport(); }
 
     void move_to(const Point3& point) { position = point; update_viewport(); }
     void turn_to(const Point3& point) { direction = (point - position).normal(); update_viewport(); }
