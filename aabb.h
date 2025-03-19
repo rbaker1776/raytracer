@@ -5,14 +5,12 @@
 #include "vector3.h"
 
 
-class AABB
+struct AABB
 {
-private:
     Interval x;
     Interval y;
     Interval z;
 
-public:
     AABB(const Interval& x, const Interval& y, const Interval& z): x(x), y(y), z(z) {}
 
     void grow_to_include(const Point3& p) { x.grow_to_include(p.x); y.grow_to_include(p.y); z.grow_to_include(p.z); }

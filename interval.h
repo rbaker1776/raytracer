@@ -13,9 +13,11 @@ struct Interval
     Interval(double lo, double hi): lo(lo), hi(hi) {}
 
     bool does_include(double d) const { return d >= lo && d <= hi; }
+    double size() const { return hi - lo; }
 
     void set_max(double d) { hi = d; }
     void grow_to_include(const Interval& i) { lo = std::min(lo, i.lo); hi = std::max(hi, i.hi); }
+    void grow_to_include(double d) { lo = std::min(lo, d); hi = std::max(hi, d); }
 
     static double clamp(double d, double lo, double hi) { return std::min(std::max(d, lo), hi); }
 

@@ -22,6 +22,7 @@ private:
     Vector3 pixel_dk = Vector3::none();         // step 1 pixel in the direction basis.k
     Point3  pixel_00 = Point3::none();          // coords of the first pixel { x, y, z }
                                                 //
+    int max_depth = 10;                         // max # of ray bounces
     int n_rays_per_pixel = 256;                 // # of rays we shoot at each pixel
 
 public:

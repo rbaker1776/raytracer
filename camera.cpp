@@ -1,7 +1,9 @@
 #include "camera.h"
 #include "object.h"
 #include "material.h"
+#include "aabb.h"
 #include <numbers>
+#include <vector>
 
 
 void Camera::update_viewport()
@@ -68,9 +70,10 @@ Image Camera::render(const Scene& scene) const
         Color pixel_color(0.0, 0.0, 0.0);
 
         for (int i = 0; i < n_rays_per_pixel; ++i)
-        { 
+        {
             const Ray ray { make_ray(j, k) };
-            pixel_color += trace(ray, 10, scene) / n_rays_per_pixel;
+            const Color color { trace(ray, max_depth, scene) };
+            pixel_color = Color(pixel_color + color / n_rays_per_pixel);
         }
 
         image[k][j] = pixel_color;
