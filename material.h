@@ -29,7 +29,7 @@ public:
 
     virtual bool scatter(const Ray& ray, const HitRecord& record, Color& attenuation, Ray& scattered) const override
     {
-        Vector3 direction { (record.normal + Vector3::random_direction()).normalized() };
+        Vector3 direction { (record.normal + Vector3::random_3D_unit()).normalized() };
 
         scattered = Ray(record.point, direction);
         attenuation = texture->color(record.point);
@@ -52,7 +52,7 @@ public:
 
     virtual bool scatter(const Ray& ray, const HitRecord& record, Color& attenuation, Ray& scattered) const override
     {
-        const Vector3 reflection { ray.direction.reflect(record.normal).normalized() + Vector3::random_direction() * fuzz };
+        const Vector3 reflection { ray.direction.reflect(record.normal).normalized() + Vector3::random_3D_unit() * fuzz };
 
         scattered = Ray(record.point, reflection.normalized());
         attenuation = albedo;

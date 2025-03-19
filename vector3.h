@@ -46,7 +46,8 @@ struct Vector3
 
     static Vector3 none() { return Vector3(FPUtils::NaN(), FPUtils::NaN(), FPUtils::NaN()); }
 
-    static inline Vector3 random_direction();
+    static inline Vector3 random_3D_unit();
+    static inline Vector3 random_2D_square();
 };
 
 
@@ -64,20 +65,34 @@ inline Vector3 Vector3::refract(const Vector3& normal, double r) const
 }
 
 
-inline Vector3 Vector3::random_direction()
+inline Vector3 Vector3::random_3D_unit()
 {
-    static constexpr size_t N_RANDOMS { 65536 };
-    static const std::array<Vector3, N_RANDOMS> RANDOMS { []()
-    {
+    static constexpr size_t N_RANDOMS { 1z << 16 };
+    static std::array<Vector3, N_RANDOMS> RANDOM_3D_UNIT_VECTORS { [](){
         std::array<Vector3, N_RANDOMS> ret {};
-        for (int i = 0; i < N_RANDOMS; ++i)
+        for (Vector3& d: ret)
         {
-            ret[i] = Vector3(FPUtils::random_normal(), FPUtils::random_normal(), FPUtils::random_normal()).normalized();
+            d = Vector3(FPUtils::random_normal(), FPUtils::random_normal(), FPUtils::random_normal()).normalized();
         }
         return ret;
     }() };
 
-    return RANDOMS[std::rand() & (N_RANDOMS - 1)];
+    return RANDOM_3D_UNIT_VECTORS[std::rand() % N_RANDOMS];
+}
+
+inline Vector3 Vector3::random_2D_square()
+{
+    static constexpr size_t N_RANDOMS { 1z << 16 };
+    static std::array<Vector3, N_RANDOMS> RANDOM_2D_SQUARE_VECTORS { [](){
+        std::array<Vector3, N_RANDOMS> ret {};
+        for (Vector3& d: ret)
+        {
+            d = Vector3(FPUtils::random_uniform(), FPUtils::random_uniform(), 0) / 2;
+        }
+        return ret;
+    }() };
+    
+    return RANDOM_2D_SQUARE_VECTORS[std::rand() % N_RANDOMS];
 }
 
 

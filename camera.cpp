@@ -21,7 +21,9 @@ void Camera::update_viewport()
 
 Ray Camera::make_ray(size_t j_pix, size_t k_pix) const
 {
-    const Vector3 direction { ((pixel_00 + pixel_dj * j_pix + pixel_dk * k_pix - position).normalized() + Vector3::random_direction() * 5e-4).normalized() };
+    const Vector3 fuzz { Vector3::random_2D_square() };
+    const double fuzz_j { fuzz.x }, fuzz_k { fuzz.y };
+    const Vector3 direction { (pixel_00 - position + pixel_dj * (static_cast<double>(j_pix) + fuzz_j) + pixel_dk * (static_cast<double>(k_pix) + fuzz_k)).normalized() };
     return Ray(position, direction);
 }
 

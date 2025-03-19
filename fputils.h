@@ -13,9 +13,9 @@ namespace FPUtils
 
     static std::mt19937 gen(std::random_device{}());
 
-    inline double random_uniform(double min = -1.0, double max = 1.0)
+    inline double random_uniform()
     {
-        std::uniform_real_distribution<double> dis(min, max);
+        static std::uniform_real_distribution<double> dis(-1.0, 1.0);
         return dis(FPUtils::gen);
     }
 
